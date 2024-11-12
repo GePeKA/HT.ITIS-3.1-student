@@ -14,10 +14,12 @@ public class RegistrationService : IRegistrationService
 
     public async Task RegisterAsync(RegisterUserDto userDto)
     {
-        // pretending we have some complex logic here
         await Task.Delay(100);
         
-        // publish message to a queue
-        await _communicationService.SendEmailAsync(new SendEmail("", "", "", ""));
+        await _communicationService.SendEmailAsync(new SendEmail(
+            userDto.Name, 
+            userDto.Email,
+            "Регистрация",
+            "Вы успешно прошли регистрацию"));
     }
 }
