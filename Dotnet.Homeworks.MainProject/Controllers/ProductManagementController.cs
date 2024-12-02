@@ -24,7 +24,7 @@ public class ProductManagementController : ControllerBase
 
         return result.IsSuccess
             ? Ok(result)
-            : BadRequest(result);
+            : BadRequest(result.Error);
     }
 
     [HttpPost("product")]
@@ -34,7 +34,7 @@ public class ProductManagementController : ControllerBase
 
         return result.IsSuccess
             ? Ok(result)
-            : BadRequest(result);
+            : BadRequest(result.Error);
     }
 
     [HttpDelete("product")]
@@ -44,7 +44,7 @@ public class ProductManagementController : ControllerBase
 
         return result.IsSuccess
             ? Ok(result)
-            : BadRequest(result);
+            : BadRequest(result.Error);
     }
 
     [HttpPut("product")]
@@ -54,6 +54,6 @@ public class ProductManagementController : ControllerBase
 
         return result.IsSuccess
              ? Ok(result)
-             : BadRequest(result);
+             : BadRequest(result.Error);
     }
 }
