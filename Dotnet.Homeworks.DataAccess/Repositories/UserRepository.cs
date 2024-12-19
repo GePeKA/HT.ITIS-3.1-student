@@ -1,32 +1,47 @@
-﻿using Dotnet.Homeworks.Domain.Abstractions.Repositories;
+﻿using Dotnet.Homeworks.Data.DatabaseContext;
+using Dotnet.Homeworks.Domain.Abstractions.Repositories;
 using Dotnet.Homeworks.Domain.Entities;
 
 namespace Dotnet.Homeworks.DataAccess.Repositories;
 
 public class UserRepository : IUserRepository
 {
+    private readonly AppDbContext _dbContext;
+
+    public UserRepository(AppDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
     public Task<IQueryable<User>> GetUsersAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(_dbContext.Users.AsQueryable());
     }
 
-    public Task<User?> GetUserByGuidAsync(Guid guid, CancellationToken cancellationToken)
+    public async Task<User?> GetUserByGuidAsync(Guid guid, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var user = await _dbContext.Users.FindAsync(new object[] { guid }, cancellationToken);
+
+        return user;
     }
 
-    public Task DeleteUserByGuidAsync(Guid guid, CancellationToken cancellationToken)
+    public async Task DeleteUserByGuidAsync(Guid guid, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var user = await _dbContext.Users.FindAsync(new object[] { guid }, cancellationToken);
+        _dbContext.Users.Remove(user!);
     }
 
     public Task UpdateUserAsync(User user, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        _dbContext.Users.Update(user);
+
+        return Task.CompletedTask;
     }
 
-    public Task<Guid> InsertUserAsync(User user, CancellationToken cancellationToken)
+    public async Task<Guid> InsertUserAsync(User user, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var insertedUser = await _dbContext.Users.AddAsync(user, cancellationToken);
+
+        return insertedUser.Entity.Id;
     }
 }
