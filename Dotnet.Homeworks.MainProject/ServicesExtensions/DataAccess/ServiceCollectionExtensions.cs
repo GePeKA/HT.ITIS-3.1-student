@@ -10,6 +10,7 @@ namespace Dotnet.Homeworks.MainProject.ServicesExtensions.DataAccess
         {
             return services
                 .AddScoped<IProductRepository, ProductRepository>()
+                .AddScoped<IUserRepository, UserRepository>()
                 .AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }

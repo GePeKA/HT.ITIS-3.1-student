@@ -1,5 +1,5 @@
 using Dotnet.Homeworks.Shared.Dto;
-using MediatR;
+using Dotnet.Homeworks.Mediator;
 
 namespace Dotnet.Homeworks.Infrastructure.Cqrs.Queries;
 

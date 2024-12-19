@@ -1,3 +1,6 @@
+using System.Linq.Expressions;
+using System.Reflection;
+
 namespace Dotnet.Homeworks.Shared.Dto;
 
 public class Result
@@ -11,6 +14,34 @@ public class Result
         IsSuccess = isSuccessful;
         if (error is not null) 
             Error = error;
+    }
+
+    public static dynamic Create(bool isSuccessful, Type resultType, string? error = default, dynamic? value = default)
+    {
+        if (resultType.IsGenericType && resultType.GetGenericTypeDefinition() == typeof(Result<>))
+        {
+            var valueType = resultType.GetGenericArguments()[0];
+
+            ConstructorInfo constructor = resultType.GetConstructor(
+                new Type[] { valueType, typeof(bool), typeof(string) }
+            )!;
+
+            var successParam = Expression.Constant(isSuccessful, typeof(bool));
+            var valueParam = Expression.Constant(value, valueType);
+            var errorParam = Expression.Constant(error, typeof(string));
+
+            var exprNew = Expression.New(constructor, valueParam, successParam, errorParam);
+
+            var result = Expression.Lambda<Func<dynamic>>(exprNew).Compile()();
+
+            return result;
+        }
+        else
+        {
+            return resultType.IsAssignableTo(typeof(Result))
+                ? new Result(isSuccessful, error)
+                : throw new Exception("Not assignable to Result");
+        }
     }
 }
 

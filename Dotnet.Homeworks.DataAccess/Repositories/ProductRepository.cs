@@ -22,8 +22,7 @@ public class ProductRepository: IProductRepository
     public async Task DeleteProductByGuidAsync(Guid id, CancellationToken cancellationToken)
     {
         var product = await _dbContext.Products.FindAsync(new object?[] { id }, cancellationToken);
-
-        _dbContext.Products.Remove(product);
+        _dbContext.Products.Remove(product!);
     }
 
     public Task UpdateProductAsync(Product product, CancellationToken cancellationToken)

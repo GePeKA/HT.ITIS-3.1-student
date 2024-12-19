@@ -1,7 +1,7 @@
-﻿using Dotnet.Homeworks.MainProject.Dto;
+﻿using Dotnet.Homeworks.Infrastructure.Dto;
 using Dotnet.Homeworks.Shared.MessagingContracts.Email;
 
-namespace Dotnet.Homeworks.MainProject.Services;
+namespace Dotnet.Homeworks.Infrastructure.Services;
 
 public class RegistrationService : IRegistrationService
 {
@@ -15,9 +15,9 @@ public class RegistrationService : IRegistrationService
     public async Task RegisterAsync(RegisterUserDto userDto)
     {
         await Task.Delay(100);
-        
+
         await _communicationService.SendEmailAsync(new SendEmail(
-            userDto.Name, 
+            userDto.Name,
             userDto.Email,
             "Регистрация",
             "Вы успешно прошли регистрацию"));
