@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Security.Claims;
 using Dotnet.Homeworks.Domain.Abstractions.Repositories;
 using Dotnet.Homeworks.Features.Products.Commands.InsertProduct;
@@ -10,7 +11,6 @@ using Dotnet.Homeworks.Infrastructure.UnitOfWork;
 using Dotnet.Homeworks.Infrastructure.Validation.PermissionChecker.DependencyInjectionExtensions;
 using Dotnet.Homeworks.Mailing.API.Services;
 using Dotnet.Homeworks.MainProject.Controllers;
-using Dotnet.Homeworks.MainProject.Services;
 using Dotnet.Homeworks.Mediator.DependencyInjectionExtensions;
 using Dotnet.Homeworks.Shared.Dto;
 using Dotnet.Homeworks.Tests.Shared.RepositoriesMocks;

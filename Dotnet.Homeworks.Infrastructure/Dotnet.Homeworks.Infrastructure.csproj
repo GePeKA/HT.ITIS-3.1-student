@@ -11,6 +11,7 @@
 
     <ItemGroup>
       <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
+      <PackageReference Include="MassTransit" Version="8.3.1" />
     </ItemGroup>
 
     <ItemGroup>

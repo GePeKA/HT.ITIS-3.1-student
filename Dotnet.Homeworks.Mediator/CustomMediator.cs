@@ -18,7 +18,7 @@ public class CustomMediator : IMediator
 
         if (handler is IHasPipeline)
         {
-            var handlerDelegate = async (IRequest<TResponse> req, CancellationToken ct) => await handler.Handle(req, ct);
+            var handlerDelegate = async (dynamic req, CancellationToken ct) => (TResponse) await handler.Handle(req, ct);
 
             return await BuildPipeline(request, handlerDelegate, cancellationToken);
         }
@@ -28,19 +28,12 @@ public class CustomMediator : IMediator
         }
     }
 
-    public async Task Send<TRequest>(TRequest request, CancellationToken cancellationToken = default)
+    public Task Send<TRequest>(TRequest request, CancellationToken cancellationToken = default)
         where TRequest : IRequest
     {
         var handler = _serviceProvider.GetService<IRequestHandler<TRequest>>()!;
 
-        if (handler is IHasPipeline)
-        {
-
-        }
-        else
-        {
-            await handler.Handle(request, cancellationToken);
-        }
+        return handler.Handle(request, cancellationToken);
     }
 
     //Для чего это вообще нужно?
@@ -64,16 +57,17 @@ public class CustomMediator : IMediator
         Func<TRequest, CancellationToken, Task<TResponse>> handler,
         CancellationToken cancellationToken = default)
     {
-        var pipelineBehaviors = _serviceProvider.GetServices<IPipelineBehavior<TRequest, TResponse>>()
-           .OrderBy(p => p.GetType().Name)
-           .ToList();
+        var pipelineType = typeof(IPipelineBehavior<,>).MakeGenericType(request!.GetType(), typeof(TResponse));
 
-        RequestHandlerDelegate<TResponse> next = () => handler(request, cancellationToken);
+        var pipelineBehaviors = _serviceProvider.GetServices(pipelineType)
+           .ToList() as List<dynamic>;
+
+        RequestHandlerDelegate<TResponse> next = () => handler((dynamic) request, cancellationToken);
 
         foreach (var behavior in pipelineBehaviors)
         {
             var nextClosure = next;
-            next = () => behavior.Handle(request, nextClosure, cancellationToken);
+            next = () => behavior.Handle((dynamic) request, nextClosure, cancellationToken);
         }
 
         return await next();

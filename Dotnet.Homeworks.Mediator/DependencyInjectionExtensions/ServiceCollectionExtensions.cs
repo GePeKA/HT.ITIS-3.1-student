@@ -19,11 +19,17 @@ public static class ServiceCollectionExtensions
     }
 
     public static IServiceCollection AddMediatorPipelines(this IServiceCollection services,
-        Assembly[] pipelinesAssemblies,
-        Assembly[] handlersAssemblies)
+        Assembly[] handlersAssemblies,
+        params Type[] pipelineImplementations)
     {
         var requestHandlersAndInterfaces = GetHandlerTypesAndInterfaces(handlersAssemblies);
-        var pipelineImplementations = GetPipelineImplementations(pipelinesAssemblies);
+
+        if (pipelineImplementations.Any(t =>
+            !t.GetInterfaces().Any(i =>
+                i.GetGenericTypeDefinition() == typeof(IPipelineBehavior<,>))))
+        {
+            throw new Exception("At least one of provided pipelineImplementations does not imlement IPipelineBehavior<,>");
+        }
 
         foreach (var (handler, iface) in requestHandlersAndInterfaces)
         {
@@ -50,15 +56,6 @@ public static class ServiceCollectionExtensions
         var pipelineImplementation = pipelineType.MakeGenericType(requestType, responseType);
 
         services.AddScoped(pipelineInterface, pipelineImplementation);
-    }
-
-    private static List<Type> GetPipelineImplementations(params Assembly[] pipelinesAssemblies)
-    {
-        return pipelinesAssemblies.SelectMany(a => a.GetTypes())
-            .Where(t => t
-                .GetInterfaces()
-                .Any(i => i.GetGenericTypeDefinition() == typeof(IPipelineBehavior<,>)))
-            .ToList();
     }
 
     private static List<(Type handler, Type iface)> GetHandlerTypesAndInterfaces(Assembly[] handlersAssemblies)

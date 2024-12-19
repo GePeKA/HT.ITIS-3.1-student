@@ -1,6 +1,5 @@
 ﻿using Dotnet.Homeworks.Infrastructure.Services;
 using Dotnet.Homeworks.Mailing.API.Services;
-using Dotnet.Homeworks.MainProject.Services;
 using MassTransit.Testing;
 
 namespace Dotnet.Homeworks.Tests.MasstransitRabbit.Helpers;

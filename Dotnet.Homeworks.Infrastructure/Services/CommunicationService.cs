@@ -1,8 +1,7 @@
-﻿using Dotnet.Homeworks.Infrastructure.Services;
-using Dotnet.Homeworks.Shared.MessagingContracts.Email;
+﻿using Dotnet.Homeworks.Shared.MessagingContracts.Email;
 using MassTransit;
 
-namespace Dotnet.Homeworks.MainProject.Services;
+namespace Dotnet.Homeworks.Infrastructure.Services;
 
 public class CommunicationService : ICommunicationService
 {

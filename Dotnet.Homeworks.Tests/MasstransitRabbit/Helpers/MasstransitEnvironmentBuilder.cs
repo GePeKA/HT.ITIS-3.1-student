@@ -3,7 +3,6 @@ using Dotnet.Homeworks.Infrastructure.Services;
 using Dotnet.Homeworks.Mailing.API.Consumers;
 using Dotnet.Homeworks.Mailing.API.Helpers;
 using Dotnet.Homeworks.Mailing.API.Services;
-using Dotnet.Homeworks.MainProject.Services;
 using Dotnet.Homeworks.Shared.MessagingContracts.Email;
 using Dotnet.Homeworks.Tests.Shared.TestEnvironmentBuilder;
 using MassTransit;

@@ -1,6 +1,5 @@
 using Dotnet.Homeworks.Data.DatabaseContext;
 using Dotnet.Homeworks.MainProject.Configuration;
-using Dotnet.Homeworks.MainProject.Services;
 using Dotnet.Homeworks.MainProject.ServicesExtensions.DataAccess;
 using Dotnet.Homeworks.MainProject.ServicesExtensions.Masstransit;
 using Dotnet.Homeworks.MainProject.ServicesExtensions.Migrations;
