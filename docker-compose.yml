@@ -2,24 +2,89 @@ version: '3.8'
 services:
   dotnet_postgres:
     image: postgres:alpine
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: postgres
+      POSTGRES_DB: MainDatabase
     
   dotnet_rabbitmq:
     image: rabbitmq:3-alpine
+    ports:
+      - 15672:15672
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
     
   dotnet_minio:
     image: minio/minio:latest
+    command: server --console-address ":9001" /data
+    volumes:
+      - minio-data:/data
+    ports:
+      - "9002:9000"
+      - "9003:9001"
+    environment:
+      MINIO_ROOT_USER: Minio_RootUser
+      MINIO_ROOT_PASSWORD: Minio_Password
+
+  # dotnet_mongodb:
+  #   image: mongo:latest
     
-  dotnet_mongodb:
-    image: mongo:latest
-    
-  dotnet_jaeger:
-    image: jaegertracing/all-in-one:latest
+  # dotnet_jaeger:
+  #   image: jaegertracing/all-in-one:latest
     
   dotnet_main:
     image: dotnet-web
+    build:
+      context: "."
+      dockerfile: "Dotnet.Homeworks.MainProject/Dockerfile"
+    ports:
+      - "8080:80"
+      - "8081:443"
+    environment:
+      ConnectionStrings__Default: "User ID=postgres;Password=admin;Host=dotnet_postgres;Port=5432;Database=MainDatabase"
+      RabbitMqConfig__Username: admin
+      RabbitMqConfig__Password: admin123
+      RabbitMqConfig__Hostname: amqp://dotnet_rabbitmq:5672
+    depends_on:
+      - dotnet_postgres
+      - dotnet_rabbitmq
+  
     
   dotnet_mailing:
     image: dotnet-web
+    build:
+      context: "."
+      dockerfile: "Dotnet.Homeworks.Mailing.API/Dockerfile"
+    ports:
+      - "8090:80"
+      - "8091:443"
+    environment:
+      EmailConfig__Email: someEmail@gmail.com
+      EmailConfig__Host: smtp.gmail.com
+      EmailConfig__Port: 587
+      EmailConfig__Password: aaaa bbbb cccc dddd
+      RabbitMqConfig__Username: admin
+      RabbitMqConfig__Password: admin123
+      RabbitMqConfig__Hostname: amqp://dotnet_rabbitmq:5672
+    depends_on:
+      - dotnet_rabbitmq
     
   dotnet_storage:
     image: dotnet-web
+    build:
+      context: "."
+      dockerfile: "Dotnet.Homeworks.Storage.API/Dockerfile"
+    ports:
+      - "10090:80"
+      - "10091:443"
+    environment:
+      MinioConfig__Username: Minio_RootUser
+      MinioConfig__Password: Minio_Password
+      MinioConfig__Endpoint: dotnet_minio
+      MinioConfig__Port: 9000
+      MinioConfig__WithSsl: false
+    depends_on:
+      - dotnet_minio

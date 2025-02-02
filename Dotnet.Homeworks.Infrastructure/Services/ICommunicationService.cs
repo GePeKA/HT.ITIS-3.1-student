@@ -1,6 +1,6 @@
 ﻿using Dotnet.Homeworks.Shared.MessagingContracts.Email;
 
-namespace Dotnet.Homeworks.MainProject.Services;
+namespace Dotnet.Homeworks.Infrastructure.Services;
 
 public interface ICommunicationService
 {

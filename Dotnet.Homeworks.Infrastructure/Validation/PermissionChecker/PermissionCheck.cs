@@ -1,11 +1,33 @@
 ﻿using Dotnet.Homeworks.Infrastructure.Utils;
+using Dotnet.Homeworks.Infrastructure.Validation.RequestTypes;
 
 namespace Dotnet.Homeworks.Infrastructure.Validation.PermissionChecker;
 
 public class PermissionCheck : IPermissionCheck
 {
-    public Task<IEnumerable<PermissionResult>> CheckPermissionAsync<TRequest>(TRequest request)
+    IServiceProvider _serviceProvider;
+
+    public PermissionCheck(IServiceProvider serviceProvider)
     {
-        throw new NotImplementedException();
+        _serviceProvider = serviceProvider;
+    }
+
+    public async Task<IEnumerable<PermissionResult>> CheckPermissionAsync<TRequest>(TRequest request)
+    {
+        if (!typeof(TRequest)
+            .GetInterfaces()
+            .Any(x =>
+                x == typeof(IClientRequest) 
+                || x == typeof(IAdminRequest)))
+        {
+            return new List<PermissionResult> { new(true) };
+        }
+
+        var permissionCheckType = request is IAdminRequest
+            ? typeof(IPermissionCheck<>).MakeGenericType(typeof(IAdminRequest))
+            : typeof(IPermissionCheck<>).MakeGenericType(typeof(IClientRequest));
+
+        var permissionCheck = _serviceProvider.GetService(permissionCheckType) as dynamic;
+        return await permissionCheck!.CheckPermissionAsync(request);
     }
 }

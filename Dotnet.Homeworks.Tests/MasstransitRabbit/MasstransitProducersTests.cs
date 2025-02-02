@@ -1,5 +1,5 @@
-﻿using Dotnet.Homeworks.MainProject.Dto;
-using Dotnet.Homeworks.MainProject.Services;
+﻿using Dotnet.Homeworks.Infrastructure.Dto;
+using Dotnet.Homeworks.Infrastructure.Services;
 using Dotnet.Homeworks.Shared.MessagingContracts.Email;
 using Dotnet.Homeworks.Tests.MasstransitRabbit.Helpers;
 using Dotnet.Homeworks.Tests.RunLogic.Attributes;

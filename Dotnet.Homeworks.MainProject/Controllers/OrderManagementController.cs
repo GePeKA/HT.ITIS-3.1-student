@@ -1,3 +1,4 @@
+using Dotnet.Homeworks.Mediator;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dotnet.Homeworks.MainProject.Controllers;
@@ -5,6 +6,13 @@ namespace Dotnet.Homeworks.MainProject.Controllers;
 [ApiController]
 public class OrderManagementController : ControllerBase
 {
+    private readonly IMediator _mediator;
+
+    public OrderManagementController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
     [HttpGet("orders")]
     public Task<IActionResult> GetUserOrdersAsync(CancellationToken cancellationToken)
     {

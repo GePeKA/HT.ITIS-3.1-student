@@ -1,17 +1,22 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Reflection;
+using System.Security.Claims;
 using Dotnet.Homeworks.Domain.Abstractions.Repositories;
 using Dotnet.Homeworks.Features.Products.Commands.InsertProduct;
 using Dotnet.Homeworks.Features.Products.Queries.GetProducts;
 using Dotnet.Homeworks.Infrastructure.Cqrs.Commands;
 using Dotnet.Homeworks.Infrastructure.Cqrs.Queries;
+using Dotnet.Homeworks.Infrastructure.Services;
 using Dotnet.Homeworks.Infrastructure.UnitOfWork;
 using Dotnet.Homeworks.Infrastructure.Validation.PermissionChecker.DependencyInjectionExtensions;
+using Dotnet.Homeworks.Mailing.API.Services;
 using Dotnet.Homeworks.MainProject.Controllers;
 using Dotnet.Homeworks.Mediator.DependencyInjectionExtensions;
 using Dotnet.Homeworks.Shared.Dto;
 using Dotnet.Homeworks.Tests.Shared.RepositoriesMocks;
 using Dotnet.Homeworks.Tests.Shared.TestEnvironmentBuilder;
 using FluentValidation;
+using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
@@ -53,7 +58,11 @@ internal class CqrsEnvironmentBuilder : TestEnvironmentBuilder<CqrsEnvironment>
             .AddSingleton<IProductRepository>(ProductRepositoryMock)
             .AddSingleton<IUserRepository>(UserRepositoryMock)
             .AddSingleton(HttpContextAccessorMock)
-            .AddSingleton(UnitOfWork);
+            .AddSingleton(UnitOfWork)
+            .AddSingleton<IRegistrationService, RegistrationService>()
+            .AddSingleton<ICommunicationService, CommunicationService>()
+            .AddSingleton(Substitute.For<IMailingService>())
+            .AddMassTransitTestHarness();
         if (IsCqrsComplete()) configureServices += s => s
             .AddValidatorsFromAssembly(Features.Helpers.AssemblyReference.Assembly)
             .AddPermissionChecks(Features.Helpers.AssemblyReference.Assembly);
